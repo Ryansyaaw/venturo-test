@@ -95,9 +95,8 @@
                                         <tr>
                                             <td>{{ $m['menu'] }}</td>
                                             @for ($i = 1; $i <= 12; $i++)
-                                                <td>
+                                                <td class="modal-trigger" data-bs-toggle="modal" data-bs-target="#exampleModal" data-menu="{{ $m['menu'] }}" data-month="{{ $i }}"">
                                                     @if (isset($totalPerMenu[$i][$m['menu']]))
-                                                        {{-- Corrected variable name here --}}
                                                         {{ number_format($totalPerMenu[$i][$m['menu']]) }}
                                                     @endif
                                                 </td>
@@ -116,9 +115,8 @@
                                         <tr>
                                             <td>{{ $m['menu'] }}</td>
                                             @for ($i = 1; $i <= 12; $i++)
-                                                <td>
+                                                <td class="modal-trigger" data-bs-toggle="modal" data-bs-target="#exampleModal" data-menu="{{ $m['menu'] }}" data-month="{{ $i }}">
                                                     @if (isset($totalPerMenu[$i][$m['menu']]))
-                                                        {{-- Corrected variable name here --}}
                                                         {{ number_format($totalPerMenu[$i][$m['menu']]) }}
                                                     @endif
                                                 </td>
@@ -156,11 +154,77 @@
         </div>
     </div>
 
+    @if ($tahun != null)
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Detail Transaksi Bulan <span id="modalMonth"></span></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Menu</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaksiDetailBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
     </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalTriggerCells = document.querySelectorAll('.modal-trigger');
+        var modalMonth = document.getElementById('modalMonth');
+        var transaksiDetailBody = document.getElementById('transaksiDetailBody');
+
+        modalTriggerCells.forEach(function (cell) {
+            cell.addEventListener('click', function () {
+                var menu = cell.dataset.menu;
+                var month = cell.dataset.month;
+
+                modalMonth.textContent = month;
+                transaksiDetailBody.innerHTML = '';
+
+                @if ($tahun != null)
+                     @foreach ($transaksi as $t)
+                    var tanggal = '{{$t['tanggal']}}';
+                    var menuName = '{{$t['menu']}}';
+                    var total = '{{$t['total']}}';
+                    var dateMonth = tanggal.substr(5, 2).replace(/^0+/, '');
+                    if (menu === menuName && month == dateMonth) {
+                        var row = transaksiDetailBody.insertRow();
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+
+                        cell1.textContent = tanggal;
+                        cell2.textContent = menuName;
+                        cell3.textContent = total;
+                    }
+                @endforeach
+                @endif
+
+            });
+        });
+    });
+</script>
 
 </body>
 

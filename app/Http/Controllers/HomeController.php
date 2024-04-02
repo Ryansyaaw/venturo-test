@@ -18,7 +18,6 @@ class HomeController extends Controller
 
         $totalPerMenu = [];
         $totalPerBulan = [];
-        $totalsemua = [];
 
         if ($tahun != null) {
             foreach ($transaksi as $t) {
@@ -39,9 +38,9 @@ class HomeController extends Controller
             }
         }
 
-        // dd($totalPerMenu);
+        // dd($totalPerBulan);
 
-        return view('index', compact('tahun', 'totalPerMenu', 'totalPerBulan', 'menu'), [
+        return view('index',[
             'menu' => $menu,
             'transaksi' => $transaksi,
             'tahun' => $tahun,
